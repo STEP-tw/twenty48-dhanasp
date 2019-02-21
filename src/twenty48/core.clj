@@ -12,9 +12,7 @@
             (partial partition-all 2))
    all-identicals))
 
-(def add (partial map (partial reduce +)))
-
-(def add-splitted (partial (comp add split-by-2)))
+(def add-splitted (partial (comp (partial map (partial reduce +)) split-by-2)))
 
 (def zeros-count
   (comp
