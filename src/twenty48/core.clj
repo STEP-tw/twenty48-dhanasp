@@ -1,22 +1,47 @@
 (ns twenty48.core
   (:gen-class))
 
+(def all-identicals
+  (comp
+   (partial partition-by identity)
+   (partial remove zero?)))
+
+(def split-by-2
+  (comp
+   (partial mapcat
+            (partial partition-all 2))
+   all-identicals))
+
+(def add (partial map (partial reduce +)))
+
+(def add-splitted (partial (comp add split-by-2)))
+
+(def zeros-count
+  (comp
+   (partial - 4)
+   (partial count)
+   add-splitted))
+
+(defn prepend-zeros
+  [coll]
+  (concat (repeat (zeros-count coll) 0) (add-splitted coll)))
+
+(defn append-zeros
+  [coll]
+  (concat (add-splitted coll) (repeat (zeros-count coll) 0)))
+
 (defn move-grid-right
-  "Moves an entire grid to the right"
   [grid]
-  grid)
+  (map prepend-zeros grid))
 
 (defn move-grid-left
-  "Moves an entire grid to the left"
   [grid]
-  grid)
+  (map append-zeros grid))
 
 (defn move-grid-down
-  "Moves an entire grid down"
   [grid]
-  grid)
+  (apply map vector (move-grid-right (apply map vector grid))))
 
 (defn move-grid-up
-  "Moves an entire grid up"
   [grid]
-  grid)
+  (apply map vector (move-grid-left (apply map vector grid))))
